@@ -4,4 +4,10 @@ system notifications from rcirc.
 A customization group, {{{rcirc-notify}}} is provided which has a
 range of settings.
 
-Install rcirc-notify via marmalade.
+It's best to install rcirc-notify via [http://marmalade-repo.org/packages/rcirc-notify/0.5|marmalade].
+
+Alternately, copy the file to your load path and:
+
+{{{
+(require 'rcirc-notify)
+}}}

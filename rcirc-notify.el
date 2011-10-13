@@ -1,4 +1,4 @@
-;;; rcirc-notify.el -- libnotify popups
+;;; rcirc-notify.el --- libnotify popups
 
 ;; Copyright (c) 2008 Will Farrington
 ;; Copyright (c) 2009, 2011 Alex Schroeder <alex@gnu.org>
@@ -203,7 +203,8 @@ that can occur between two notifications.  The default is
                   (> (abs (- cur-time last-time)) delay))
               (push (cons nick cur-time) rcirc-notify--nick-alist)
               t))))))
-  
+
+;;;###autoload  
 (defun rcirc-notify-me (proc sender response target text)
   "Notify the current user when someone sends a message that
 matches the current nick."
@@ -222,6 +223,7 @@ matches the current nick."
 	     (when keyword
 	       (rcirc-notify-keyword sender keyword text)))))))
 
+;;;###autoload
 (defun rcirc-notify-privmsg (proc sender response target text)
   "Notify the current user when someone sends a private message
 to them."
@@ -232,7 +234,13 @@ to them."
              (rcirc-notify-allowed sender))
     (rcirc-notify-private sender text)))
 
-(add-hook 'rcirc-print-hooks 'rcirc-notify-privmsg)
-(add-hook 'rcirc-print-hooks 'rcirc-notify-me)
+;;;###autoload
+(defun rcirc-notify-add-hooks ()
+  "Initialize rcirc-notify into rcirc with hooks."
+  (add-hook 'rcirc-print-hooks 'rcirc-notify-privmsg)
+  (add-hook 'rcirc-print-hooks 'rcirc-notify-me)
+  )
 
 (provide 'rcirc-notify)
+
+;;; rcirc-notify.el ends here
