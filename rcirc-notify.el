@@ -1,7 +1,16 @@
-;;;; rcirc-notify.el -- libnotify popups
+;;; rcirc-notify.el -- libnotify popups
+
 ;; Copyright (c) 2008 Will Farrington
 ;; Copyright (c) 2009, 2011 Alex Schroeder <alex@gnu.org>
-;;
+
+;; Author: Will Farrington, Alex Schroeder <alex@gnu.org>, Nic Ferrier <nferrier@ferrier.me.uk>
+;; Maintainer: Nic Ferrier <nferrier@ferrier.me.uk>
+;; Created: 13th October 2011
+;; Version: 0.5
+;; Keywords: lisp, rcirc, irc, notify, growl
+
+;; This file is NOT part of GNU Emacs.
+
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
 ;; published by the Free Software Foundation; either version 3 of
@@ -16,8 +25,9 @@
 ;; License along with this program; if not, write to the Free
 ;; Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 ;; MA 02111-1307 USA
+
+;;; Changelog:
 ;;
-;;;; Changelog:
 ;; * 2011/10/13 - Clean up the namespace, add customization, prevent
 ;;                notifys if you have the rcirc buffer open in a frame
 ;;
@@ -40,12 +50,12 @@
 ;;                notified every message
 ;;
 ;; * 2008/02/11 - First release
-;;
-;;;; Commentary:
+
+
+;;; Commentary:
 ;;
 ;; This code is inspired in part by erc-page-me.el and offers
 ;; the same functionality as it, but for rcirc.
-;;
 ;;
 ;; * `rcirc-notify-message` contains the message contents for
 ;;    the notification

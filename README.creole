@@ -1,0 +1,7 @@
+rcirc-notify is a set of EmacsLISP functions for managing operating
+system notifications from rcirc.
+
+A customization group, {{{rcirc-notify}}} is provided which has a
+range of settings.
+
+Install rcirc-notify via marmalade.
