@@ -6,7 +6,7 @@
 ;; Author: Will Farrington, Alex Schroeder <alex@gnu.org>, Nic Ferrier <nferrier@ferrier.me.uk>
 ;; Maintainer: Nic Ferrier <nferrier@ferrier.me.uk>
 ;; Created: 13th October 2011
-;; Version: 0.6
+;; Version: 0.7
 ;; Keywords: lisp, rcirc, irc, notify, growl
 
 ;; This file is NOT part of GNU Emacs.
@@ -123,6 +123,14 @@ the second %s (if any) will expand to the message text itself."
   :group 'rcirc-notify
   )
 
+(defcustom rcirc-notify-popup-timeout 8640000
+  "Number of seconds to show the notifcation popup, if relevant.
+If the notification is done via an operating system popup message
+then this controls the timeout of that popup."
+  :type '(integer)
+  :group 'rcirc-notify
+  )
+
 (defcustom rcirc-notify-timeout 60
   "Seconds between notifications from the same person."
   :type '(integer)
@@ -141,7 +149,7 @@ the second %s (if any) will expand to the message text itself."
      (start-process "page-me" nil
                     ;; 8640000 ms = 1 day
                     "notify-send" "-u" "normal" "-i" "gtk-dialog-info"
-                    "-t" "8640000" "rcirc"
+                    "-t" (format "%s" rcirc-notify-popup-timeout) "rcirc"
                     msg))
     ((executable-find "growlnotify.com")
      (start-process "page-me" "*debug*" "growlnotify.com" "/a:Emacs" "/n:IRC" msg))
