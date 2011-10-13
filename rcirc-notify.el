@@ -6,7 +6,7 @@
 ;; Author: Will Farrington, Alex Schroeder <alex@gnu.org>, Nic Ferrier <nferrier@ferrier.me.uk>
 ;; Maintainer: Nic Ferrier <nferrier@ferrier.me.uk>
 ;; Created: 13th October 2011
-;; Version: 0.5
+;; Version: 0.6
 ;; Keywords: lisp, rcirc, irc, notify, growl
 
 ;; This file is NOT part of GNU Emacs.
@@ -129,13 +129,13 @@ the second %s (if any) will expand to the message text itself."
   :group 'rcirc-notify
   )
 
-(defvar rcirc-notify-nick-alist nil
+(defvar rcirc-notify--nick-alist nil
   "An alist of nicks and the last time they tried to trigger a notification."
   )
 
 
 
-(defun rcirc-nofify-page-me (msg)
+(defun rcirc-notify-page-me (msg)
   (cond
     ((executable-find "notify-send")
      (start-process "page-me" nil
