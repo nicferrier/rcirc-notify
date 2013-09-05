@@ -27,6 +27,7 @@
 ;; MA 02111-1307 USA
 
 ;;; Changelog:
+;; * 2013/09/04 - Add support for terminal-notifier.
 ;;
 ;; * 2011/10/13 - Clean up the namespace, add customization, prevent
 ;;                notifys if you have the rcirc buffer open in a frame
@@ -40,7 +41,7 @@
 ;;                what Mac OS 10.4 and Growl 1.1.6 require.
 ;;
 ;; * 2009/02/23 - Added support for growlnotify which is a Mac OS X
-;;                notification tool.  http://growl.info -Shane Celis 
+;;                notification tool.  http://growl.info -Shane Celis
 ;;
 ;; * 2008/12/29 - Fix annoying bug where the user gets notified
 ;;                for every PRIVMSG and added new variable specifying
@@ -151,6 +152,8 @@ then this controls the timeout of that popup."
                     "notify-send" "-u" "normal" "-i" "gtk-dialog-info"
                     "-t" (format "%s" rcirc-notify-popup-timeout) "rcirc"
                     msg))
+    ((executable-find "terminal-notify")
+     (start-process "page-me" "*debug*" "terminal-notify" "-activate" "org.gnu.Emacs" "-message" msg))
     ((executable-find "growlnotify.com")
      (start-process "page-me" "*debug*" "growlnotify.com" "/a:Emacs" "/n:IRC" msg))
     ((executable-find "growlnotify")
@@ -189,11 +192,11 @@ If DELAY is specified, it will be the minimum time in seconds
 that can occur between two notifications.  The default is
 `rcirc-notify-timeout'."
   ;; Check current frame buffers
-  (let ((rcirc-in-a-frame-p 
+  (let ((rcirc-in-a-frame-p
          (some (lambda (f)
                  (and (equal "rcirc" (cdr f))
                       (car f)))
-               (mapcar (lambda (f) 
+               (mapcar (lambda (f)
                          (let ((buffer (car (frame-parameter f 'buffer-list))))
                            (with-current-buffer buffer
                              (cons buffer mode-name))))
@@ -212,7 +215,7 @@ that can occur between two notifications.  The default is
               (push (cons nick cur-time) rcirc-notify--nick-alist)
               t))))))
 
-;;;###autoload  
+;;;###autoload
 (defun rcirc-notify-me (proc sender response target text)
   "Notify the current user when someone sends a message that
 matches the current nick."
