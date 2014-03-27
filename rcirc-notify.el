@@ -76,6 +76,8 @@
 ;; /ai:http://www.emacswiki.org/pics/static/CarbonEmacsPackageIcon.png \
 ;; /a:Emacs /r:IRC /n:IRC foo
 
+;;; Code:
+
 (require 'rcirc)
 (require 'cl) ;; needed for 'some'
 
