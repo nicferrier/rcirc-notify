@@ -207,8 +207,9 @@ that can occur between two notifications.  The default is
 matches the current nick."
   (interactive)
   (when (and (not (string= (rcirc-nick proc) sender))
-	     (not (string= (rcirc-server-name proc) sender))
-	     (rcirc-notify-allowed sender))
+             (not (string= (rcirc-server-name proc) sender))
+             (rcirc-channel-p target)
+             (rcirc-notify-allowed sender))
     (cond ((string-match (rcirc-nick proc) text)
            (rcirc-notify sender text))
           (rcirc-notify-keywords
