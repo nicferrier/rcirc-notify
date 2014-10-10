@@ -158,12 +158,12 @@ then this controls the timeout of that popup."
      (start-process "page-me" "*debug*" "growlnotify" "-a" "Emacs" "-m" msg))
     ((executable-find "osascript")
      (apply 'start-process `("page-me" nil
-			     "osascript"
-			     "-e" "tell application \"GrowlHelperApp\""
-			     "-e" "register as application \"Emacs\" all notifications {\"rcirc\"} default notifications {\"rcirc\"}"
-			     "-e" ,(concat "notify with name \"rcirc\" title \"rcirc\" description \""
-					   msg "\" application name \"Emacs\"")
-			     "-e" "end tell")))
+                             "osascript"
+                             "-e" "tell application \"GrowlHelperApp\""
+                             "-e" "register as application \"Emacs\" all notifications {\"rcirc\"} default notifications {\"rcirc\"}"
+                             "-e" ,(concat "notify with name \"rcirc\" title \"rcirc\" description \""
+                                           msg "\" application name \"Emacs\"")
+                             "-e" "end tell")))
     (t (error "No method available to page you."))))
 
 (defun rcirc-notify (sender &optional text)
@@ -210,15 +210,15 @@ matches the current nick."
 	     (not (string= (rcirc-server-name proc) sender))
 	     (rcirc-notify-allowed sender))
     (cond ((string-match (rcirc-nick proc) text)
-	   (rcirc-notify sender text))
-	  (rcirc-notify-keywords
-	   (let ((keyword (catch 'match
-			    (dolist (key rcirc-keywords)
-			      (when (string-match (concat "\\<" key "\\>")
-						  text)
-				(throw 'match key))))))
-	     (when keyword
-	       (rcirc-notify-keyword sender keyword text)))))))
+           (rcirc-notify sender text))
+          (rcirc-notify-keywords
+           (let ((keyword (catch 'match
+                            (dolist (key rcirc-keywords)
+                              (when (string-match (concat "\\<" key "\\>")
+                                                  text)
+                                (throw 'match key))))))
+             (when keyword
+               (rcirc-notify-keyword sender keyword text)))))))
 
 ;;;###autoload
 (defun rcirc-notify-privmsg (proc sender response target text)
