@@ -150,6 +150,8 @@ then this controls the timeout of that popup."
                     msg))
     ((executable-find "terminal-notify")
      (start-process "page-me" "*debug*" "terminal-notify" "-activate" "org.gnu.Emacs" "-message" msg))
+    ((executable-find "terminal-notifier")
+     (start-process "page-me" "*debug*" "terminal-notifier" "-title" "rcirc" "-sender" "org.gnu.Emacs" "-activate" "org.gnu.Emacs" "-message" msg))
     ((executable-find "growlnotify.com")
      (start-process "page-me" "*debug*" "growlnotify.com" "/a:Emacs" "/n:IRC" msg))
     ((executable-find "growlnotify")
