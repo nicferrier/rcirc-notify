@@ -136,9 +136,11 @@ then this controls the timeout of that popup."
   "An alist of nicks and the last time they tried to trigger a notification."
   )
 
-
+(defvar rcirc-notify-page-me-hooks nil
+  "Hook functions called when rcirc-notify sends a notification.")
 
 (defun rcirc-notify-page-me (msg)
+  (run-hook-with-args 'rcirc-notify-page-me-hooks msg)
   (cond
     ((executable-find "notify-send")
      (start-process "page-me" nil
