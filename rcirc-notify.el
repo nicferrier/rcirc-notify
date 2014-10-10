@@ -79,7 +79,6 @@
 ;;; Code:
 
 (require 'rcirc)
-(require 'cl) ;; needed for 'some'
 
 (defgroup rcirc-notify nil
   "Notifications for the rcirc IRC client."
@@ -100,13 +99,6 @@ See `rcirc-notify-keyword' for the message format to use."
   :type '(boolean)
   :group 'rcirc-notify
   )
-
-(defcustom rcirc-notify-check-frame nil
-  "When a notify happens check if RCIRC buffer is open in a frame.
-If you don't want notifications if you have rcirc open in a frame
-then turn this on and they won't be delivered."
-  :type '(boolean)
-  :group 'rcirc-notify)
 
 (defcustom rcirc-notify-keyword "%s mentioned the keyword '%s': %s"
   "Format of the message to display in the popup.
@@ -193,29 +185,17 @@ then this controls the timeout of that popup."
 If DELAY is specified, it will be the minimum time in seconds
 that can occur between two notifications.  The default is
 `rcirc-notify-timeout'."
-  ;; Check current frame buffers
-  (let ((rcirc-in-a-frame-p
-         (some (lambda (f)
-                 (and (equal "rcirc" (cdr f))
-                      (car f)))
-               (mapcar (lambda (f)
-                         (let ((buffer (car (frame-parameter f 'buffer-list))))
-                           (with-current-buffer buffer
-                             (cons buffer mode-name))))
-                       (visible-frame-list)))))
-    (if (and rcirc-notify-check-frame (not rcirc-in-a-frame-p))
+  (unless delay (setq delay rcirc-notify-timeout))
+  (let ((cur-time (time-to-seconds (current-time)))
+        (cur-assoc (assoc nick rcirc-notify--nick-alist))
+        (last-time))
+    (if cur-assoc
         (progn
-          (unless delay (setq delay rcirc-notify-timeout))
-          (let ((cur-time (float-time (current-time)))
-                (cur-assoc (assoc nick rcirc-notify--nick-alist))
-                (last-time))
-            (if cur-assoc
-                (progn
-                  (setq last-time (cdr cur-assoc))
-                  (setcdr cur-assoc cur-time)
-                  (> (abs (- cur-time last-time)) delay))
-              (push (cons nick cur-time) rcirc-notify--nick-alist)
-              t))))))
+          (setq last-time (cdr cur-assoc))
+          (setcdr cur-assoc cur-time)
+          (> (abs (- cur-time last-time)) delay))
+      (push (cons nick cur-time) rcirc-notify--nick-alist)
+      t)))
 
 ;;;###autoload
 (defun rcirc-notify-me (proc sender response target text)
