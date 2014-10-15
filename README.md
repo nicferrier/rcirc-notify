@@ -25,8 +25,11 @@ First of all test that you have a notification application set up properly:
 
 If that displayed a notification you're ready to configure things. If not stop here and make sure you have one of the supported notification utilities installed!
 
+The next step is to add the rcirc-notify hooks, execute this:
 
-The following customization variables are available:
+     (rcirc-notify-add-hooks)
+
+You're done! If you want to customize things further the following customization variables are available:
 
 | Name                           | Description                                                                              | Default                             |
 | ------------------------------ | ---------------------------------------------------------------------------------------- | ----------------------------------- |
