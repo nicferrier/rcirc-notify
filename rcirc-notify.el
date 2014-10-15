@@ -27,6 +27,12 @@
 ;; MA 02111-1307 USA
 
 ;;; Changelog:
+;; * 2014/10/08 - Added support for terminal-notifier,
+;;                added rcirc-notify-page-me-hooks,
+;;                removed broken notification-check-frame feature,
+;;                improved README and fixed "cl package required
+;;                at runtime" warning.
+;;
 ;; * 2013/09/04 - Add support for terminal-notifier.
 ;;
 ;; * 2011/10/13 - Clean up the namespace, add customization, prevent
