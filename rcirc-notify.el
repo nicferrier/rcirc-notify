@@ -27,6 +27,12 @@
 ;; MA 02111-1307 USA
 
 ;;; Changelog:
+;; * 2014/10/08 - Added support for terminal-notifier,
+;;                added rcirc-notify-page-me-hooks,
+;;                removed broken notification-check-frame feature,
+;;                improved README and fixed "cl package required
+;;                at runtime" warning.
+;;
 ;; * 2013/09/04 - Add support for terminal-notifier.
 ;;
 ;; * 2011/10/13 - Clean up the namespace, add customization, prevent
@@ -79,7 +85,6 @@
 ;;; Code:
 
 (require 'rcirc)
-(require 'cl) ;; needed for 'some'
 
 (defgroup rcirc-notify nil
   "Notifications for the rcirc IRC client."
@@ -100,13 +105,6 @@ See `rcirc-notify-keyword' for the message format to use."
   :type '(boolean)
   :group 'rcirc-notify
   )
-
-(defcustom rcirc-notify-check-frame nil
-  "When a notify happens check if RCIRC buffer is open in a frame.
-If you don't want notifications if you have rcirc open in a frame
-then turn this on and they won't be delivered."
-  :type '(boolean)
-  :group 'rcirc-notify)
 
 (defcustom rcirc-notify-keyword "%s mentioned the keyword '%s': %s"
   "Format of the message to display in the popup.
@@ -144,9 +142,11 @@ then this controls the timeout of that popup."
   "An alist of nicks and the last time they tried to trigger a notification."
   )
 
-
+(defvar rcirc-notify-page-me-hooks nil
+  "Hook functions called when rcirc-notify sends a notification.")
 
 (defun rcirc-notify-page-me (msg)
+  (run-hook-with-args 'rcirc-notify-page-me-hooks msg)
   (cond
     ((executable-find "notify-send")
      (start-process "page-me" nil
@@ -156,18 +156,20 @@ then this controls the timeout of that popup."
                     msg))
     ((executable-find "terminal-notify")
      (start-process "page-me" "*debug*" "terminal-notify" "-activate" "org.gnu.Emacs" "-message" msg))
+    ((executable-find "terminal-notifier")
+     (start-process "page-me" "*debug*" "terminal-notifier" "-title" "rcirc" "-sender" "org.gnu.Emacs" "-activate" "org.gnu.Emacs" "-message" msg))
     ((executable-find "growlnotify.com")
      (start-process "page-me" "*debug*" "growlnotify.com" "/a:Emacs" "/n:IRC" msg))
     ((executable-find "growlnotify")
      (start-process "page-me" "*debug*" "growlnotify" "-a" "Emacs" "-m" msg))
     ((executable-find "osascript")
      (apply 'start-process `("page-me" nil
-			     "osascript"
-			     "-e" "tell application \"GrowlHelperApp\""
-			     "-e" "register as application \"Emacs\" all notifications {\"rcirc\"} default notifications {\"rcirc\"}"
-			     "-e" ,(concat "notify with name \"rcirc\" title \"rcirc\" description \""
-					   msg "\" application name \"Emacs\"")
-			     "-e" "end tell")))
+                             "osascript"
+                             "-e" "tell application \"GrowlHelperApp\""
+                             "-e" "register as application \"Emacs\" all notifications {\"rcirc\"} default notifications {\"rcirc\"}"
+                             "-e" ,(concat "notify with name \"rcirc\" title \"rcirc\" description \""
+                                           msg "\" application name \"Emacs\"")
+                             "-e" "end tell")))
     (t (error "No method available to page you."))))
 
 (defun rcirc-notify (sender &optional text)
@@ -193,29 +195,17 @@ then this controls the timeout of that popup."
 If DELAY is specified, it will be the minimum time in seconds
 that can occur between two notifications.  The default is
 `rcirc-notify-timeout'."
-  ;; Check current frame buffers
-  (let ((rcirc-in-a-frame-p
-         (some (lambda (f)
-                 (and (equal "rcirc" (cdr f))
-                      (car f)))
-               (mapcar (lambda (f)
-                         (let ((buffer (car (frame-parameter f 'buffer-list))))
-                           (with-current-buffer buffer
-                             (cons buffer mode-name))))
-                       (visible-frame-list)))))
-    (if (and rcirc-notify-check-frame (not rcirc-in-a-frame-p))
+  (unless delay (setq delay rcirc-notify-timeout))
+  (let ((cur-time (time-to-seconds (current-time)))
+        (cur-assoc (assoc nick rcirc-notify--nick-alist))
+        (last-time))
+    (if cur-assoc
         (progn
-          (unless delay (setq delay rcirc-notify-timeout))
-          (let ((cur-time (float-time (current-time)))
-                (cur-assoc (assoc nick rcirc-notify--nick-alist))
-                (last-time))
-            (if cur-assoc
-                (progn
-                  (setq last-time (cdr cur-assoc))
-                  (setcdr cur-assoc cur-time)
-                  (> (abs (- cur-time last-time)) delay))
-              (push (cons nick cur-time) rcirc-notify--nick-alist)
-              t))))))
+          (setq last-time (cdr cur-assoc))
+          (setcdr cur-assoc cur-time)
+          (> (abs (- cur-time last-time)) delay))
+      (push (cons nick cur-time) rcirc-notify--nick-alist)
+      t)))
 
 ;;;###autoload
 (defun rcirc-notify-me (proc sender response target text)
@@ -223,18 +213,19 @@ that can occur between two notifications.  The default is
 matches the current nick."
   (interactive)
   (when (and (not (string= (rcirc-nick proc) sender))
-	     (not (string= (rcirc-server-name proc) sender))
-	     (rcirc-notify-allowed sender))
+             (not (string= (rcirc-server-name proc) sender))
+             (rcirc-channel-p target)
+             (rcirc-notify-allowed sender))
     (cond ((string-match (rcirc-nick proc) text)
-	   (rcirc-notify sender text))
-	  (rcirc-notify-keywords
-	   (let ((keyword (catch 'match
-			    (dolist (key rcirc-keywords)
-			      (when (string-match (concat "\\<" key "\\>")
-						  text)
-				(throw 'match key))))))
-	     (when keyword
-	       (rcirc-notify-keyword sender keyword text)))))))
+           (rcirc-notify sender text))
+          (rcirc-notify-keywords
+           (let ((keyword (catch 'match
+                            (dolist (key rcirc-keywords)
+                              (when (string-match (concat "\\<" key "\\>")
+                                                  text)
+                                (throw 'match key))))))
+             (when keyword
+               (rcirc-notify-keyword sender keyword text)))))))
 
 ;;;###autoload
 (defun rcirc-notify-privmsg (proc sender response target text)
