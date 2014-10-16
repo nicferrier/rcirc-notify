@@ -172,6 +172,14 @@ then this controls the timeout of that popup."
                              "-e" "end tell")))
     (t (error "No method available to page you."))))
 
+
+(defun rcirc-notify-page-test ()
+  "Test the notify system."
+  (interactive)
+  (rcirc-notify-page-me (format "Hi %s, it's %s"
+                                user-full-name (current-time-string))))
+
+
 (defun rcirc-notify (sender &optional text)
   (when window-system
     ;; Set default dir to appease the notification gods
@@ -241,9 +249,9 @@ to them."
 ;;;###autoload
 (defun rcirc-notify-add-hooks ()
   "Initialize rcirc-notify into rcirc with hooks."
+  (interactive)
   (add-hook 'rcirc-print-hooks 'rcirc-notify-privmsg)
-  (add-hook 'rcirc-print-hooks 'rcirc-notify-me)
-  )
+  (add-hook 'rcirc-print-hooks 'rcirc-notify-me))
 
 (provide 'rcirc-notify)
 

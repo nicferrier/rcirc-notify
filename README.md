@@ -1,16 +1,16 @@
 # rcirc-notify
 
-## Introduction
-
 rcirc-notify adds notification support to the Emacs IRC client rcirc.
 
 ## Installation
 
-It's best to install rcirc-notify [via marmalade](http://marmalade-repo.org/packages/rcirc-notify).
+It's best to install rcirc-notify
+[via marmalade](http://marmalade-repo.org/packages/rcirc-notify).
 
 Alternately you can copy the file to your load path and `(require 'rcirc-notify)`.
 
-rcirc-notify supports the following notification utilities, ensure that one of them is installed:
+rcirc-notify supports the following notification utilities, ensure
+that one of them is installed:
 
  - [notify-send](http://manpages.ubuntu.com/manpages/gutsy/man1/notify-send.1.html) (Linux)
  - terminal-notify
@@ -21,15 +21,18 @@ rcirc-notify supports the following notification utilities, ensure that one of t
 
 First of all test that you have a notification application set up properly:
 
-      (rcirc-notify-page-me "Hello World")
+      M-x rcirc-notify-page-test
 
-If that displayed a notification you're ready to configure things. If not stop here and make sure you have one of the supported notification utilities installed!
+If that displayed a notification you're ready to configure things. If
+not stop here and make sure you have one of the supported notification
+utilities installed!
 
 The next step is to add the rcirc-notify hooks, execute this:
 
-     (rcirc-notify-add-hooks)
+     M-x rcirc-notify-add-hooks
 
-You're done! If you want to customize things further the following customization variables are available:
+You're done! If you want to customize things further the following
+customization variables are available:
 
 | Name                           | Description                                                                              | Default                             |
 | ------------------------------ | ---------------------------------------------------------------------------------------- | ----------------------------------- |
@@ -41,26 +44,24 @@ You're done! If you want to customize things further the following customization
 | `rcirc-notify-timeout`         | Seconds between notifications from the same user, avoids being spammed by one person.    | 60                                  |
 
 
-Additionally there is one hook `rcirc-notify-page-me-hooks` that can be used to perform something else on notification, for example playing a sound:
+Additionally there is one hook `rcirc-notify-page-me-hooks` that can
+be used to perform something else on notification, for example playing
+a sound:
 
       ; Play a sound file on notification (using afplay, a program included with Mac OS)
       (add-hook 'rcirc-notify-page-me-hooks
          (lambda (msg)
            (start-process "beep-process" nil "afplay" "~/some-sound-file..m4a")))
 
-## License
 
-      ;; This program is free software; you can redistribute it and/or
-      ;; modify it under the terms of the GNU General Public License as
-      ;; published by the Free Software Foundation; either version 3 of
-      ;; the License, or (at your option) any later version.
-      ;;
-      ;; This program is distributed in the hope that it will be
-      ;; useful, but WITHOUT ANY WARRANTY; without even the implied
-      ;; warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-      ;; PURPOSE.  See the GNU General Public License for more details.
-      ;;
-      ;; You should have received a copy of the GNU General Public
-      ;; License along with this program; if not, write to the Free
-      ;; Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
-      ;; MA 02111-1307 USA
+## Do I have to run rcirc-notify-add-hooks every time?
+
+No. rcirc-notify-add-hooks adds rcirc-notify to your rcirc hooks. So
+when rcirc runs it will automatically load rcirc-notify.
+
+## Multiple versions?
+
+You can find rcirc-notify on the
+[EmacsWiki](http://emacswiki.org/wiki/). The version in mamalade is
+derived from here.
+
