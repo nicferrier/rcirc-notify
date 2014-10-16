@@ -6,7 +6,7 @@
 ;; Author: Will Farrington, Alex Schroeder <alex@gnu.org>, Nic Ferrier <nferrier@ferrier.me.uk>
 ;; Maintainer: Nic Ferrier <nferrier@ferrier.me.uk>
 ;; Created: 13th October 2011
-;; Version: 0.8
+;; Version: 0.9
 ;; Keywords: lisp, rcirc, irc, notify, growl
 
 ;; This file is NOT part of GNU Emacs.
