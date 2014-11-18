@@ -27,6 +27,8 @@
 ;; MA 02111-1307 USA
 
 ;;; Changelog:
+;; * 2014/11/18 - Improved notify-send support by passing correct flags.
+;;
 ;; * 2014/10/08 - Added support for terminal-notifier,
 ;;                added rcirc-notify-page-me-hooks,
 ;;                removed broken notification-check-frame feature,
@@ -151,7 +153,8 @@ then this controls the timeout of that popup."
     ((executable-find "notify-send")
      (start-process "page-me" nil
                     ;; 8640000 ms = 1 day
-                    "notify-send" "-u" "normal" "-i" "gtk-dialog-info"
+                    "notify-send" "-u" "normal" "-i" "emacs" "-a" "emacs"
+                    "-c" "im.received"
                     "-t" (format "%s" rcirc-notify-popup-timeout) "rcirc"
                     msg))
     ((executable-find "terminal-notify")
